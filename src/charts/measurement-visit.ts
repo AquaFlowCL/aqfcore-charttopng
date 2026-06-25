@@ -12,6 +12,11 @@ function getSeries(data: ChartData, key: 'velocityData' | 'depthData' | 'surface
   return value;
 }
 
+function xExtent(...series: XYPair[][]): [number, number] {
+  const values = series.flat().map(([x]) => x);
+  return [Math.min(...values), Math.max(...values)];
+}
+
 // Harmonious, report-friendly palette.
 const COLORS = {
   velocity: '#d08770',
@@ -35,6 +40,7 @@ export const measurementVisitChartBuilder: ChartBuilder = {
     const distanceUnit = (data.distanceUnit as string | undefined) ?? 'm';
     const valueUnit = (data.valueUnit as string | undefined) ?? 'm';
     const s = pixelRatio;
+    const [xMin, xMax] = xExtent(velocityData, depthData, surfaceData);
 
     return {
       backgroundColor: '#ffffff',
@@ -58,6 +64,8 @@ export const measurementVisitChartBuilder: ChartBuilder = {
       },
       xAxis: {
         type: 'value',
+        min: xMin,
+        max: xMax,
         name: `Distancia horizontal (${distanceUnit})`,
         nameLocation: 'middle',
         nameGap: 40 * s,
