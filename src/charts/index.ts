@@ -1,4 +1,3 @@
-import { velocityDepthChartBuilder } from './velocity-depth.js';
 import { measurementVisitChartBuilder } from './measurement-visit.js';
 
 export type ChartData = Record<string, unknown>;
@@ -8,7 +7,6 @@ export interface ChartBuilder {
 }
 
 const registry = new Map<string, ChartBuilder>([
-  ['velocity-depth', velocityDepthChartBuilder],
   ['measurement-visit', measurementVisitChartBuilder],
 ]);
 

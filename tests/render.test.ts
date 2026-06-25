@@ -1,13 +1,25 @@
 import { describe, expect, it } from 'vitest';
 
-import { velocityDepthChartBuilder } from '../src/charts/velocity-depth.js';
+import { measurementVisitChartBuilder } from '../src/charts/measurement-visit.js';
 import { buildSVG, render } from '../src/render.js';
 
-const option = velocityDepthChartBuilder.build(
+const option = measurementVisitChartBuilder.build(
   {
-    distance: [0, 10, 20],
-    velocity: [1.1, 1.3, 1.2],
-    depth: [0.4, 0.7, 1.0],
+    velocityData: [
+      [0, 0],
+      [1, 0.3],
+      [2, 0.1],
+    ],
+    depthData: [
+      [0, 0],
+      [1, -0.5],
+      [2, 0],
+    ],
+    surfaceData: [
+      [0, 0.02],
+      [1, 0.03],
+      [2, 0.02],
+    ],
   },
   800,
   400,

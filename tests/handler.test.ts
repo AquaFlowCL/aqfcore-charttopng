@@ -3,11 +3,23 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { buildApp } from '../src/index.js';
 
 const validPayload = {
-  type: 'velocity-depth',
+  type: 'measurement-visit',
   data: {
-    distance: [0, 10, 20],
-    velocity: [1.2, 1.4, 1.1],
-    depth: [0.5, 0.8, 1.1],
+    velocityData: [
+      [0, 0],
+      [1, 0.3],
+      [2, 0.1],
+    ],
+    depthData: [
+      [0, 0],
+      [1, -0.5],
+      [2, 0],
+    ],
+    surfaceData: [
+      [0, 0.02],
+      [1, 0.03],
+      [2, 0.02],
+    ],
   },
 };
 
@@ -22,7 +34,7 @@ describe('POST /chart', () => {
     await app.close();
   });
 
-  it('returns png content for a valid velocity-depth request', async () => {
+  it('returns png content for a valid measurement-visit request', async () => {
     const response = await app.inject({
       method: 'POST',
       url: '/chart',
@@ -48,12 +60,26 @@ describe('POST /chart', () => {
     expect(response.json()).toEqual({ error: 'unknown chart type: foo' });
   });
 
+  it('returns 400 for velocity-depth requests', async () => {
+    const response = await app.inject({
+      method: 'POST',
+      url: '/chart',
+      payload: {
+        ...validPayload,
+        type: 'velocity-depth',
+      },
+    });
+
+    expect(response.statusCode).toBe(400);
+    expect(response.json()).toEqual({ error: 'unknown chart type: velocity-depth' });
+  });
+
   it('returns 400 when data is missing', async () => {
     const response = await app.inject({
       method: 'POST',
       url: '/chart',
       payload: {
-        type: 'velocity-depth',
+        type: 'measurement-visit',
       },
     });
 
