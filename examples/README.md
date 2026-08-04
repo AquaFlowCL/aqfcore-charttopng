@@ -39,6 +39,16 @@ node examples/measurement-visit.js
 
 The output is written to `examples/measurement-visit-output.png` (or `.svg` if you change the `format` field in the JSON payload).
 
+## `adcp-qrev`
+
+Renders the QRev primary-velocity cross-section through the same `POST /chart` endpoint. The helper converts QRev's MAP CSV into the API payload; the server receives JSON and returns the image.
+
+```bash
+npm run build
+npm start &
+QREV_CSV=/path/to/MAP.csv node examples/qrev-map.js
+```
+
 ### Customise the API URL
 
 The Node.js example defaults to `http://localhost:3000`. Override it with:
