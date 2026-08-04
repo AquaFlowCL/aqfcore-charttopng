@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { registerChartRoute } from './handler.js';
 
 export function buildApp(): FastifyInstance {
-  const app = Fastify({ bodyLimit: 524288 });
+  const app = Fastify({ bodyLimit: 524288, logger: true });
 
   app.get('/health', async () => ({ status: 'ok' }));
   registerChartRoute(app);

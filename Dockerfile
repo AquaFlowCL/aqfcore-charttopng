@@ -12,10 +12,13 @@ RUN npm run build
 FROM node:24-bookworm-slim
 
 WORKDIR /app
-ENV NODE_ENV=production
+ENV NODE_ENV=production \
+    FONTCONFIG_PATH=/etc/fonts \
+    FONTCONFIG_FILE=/etc/fonts/fonts.conf
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends fonts-dejavu-core \
+  && apt-get install -y --no-install-recommends fontconfig fonts-dejavu-core \
+  && fc-cache -f \
   && rm -rf /var/lib/apt/lists/*
 
 COPY package.json package-lock.json ./

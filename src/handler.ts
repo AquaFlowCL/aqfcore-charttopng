@@ -39,8 +39,10 @@ async function chartHandler(
     return { error: `unknown chart type: ${type}` } as never;
   }
 
+  request.log.info({ type, width, height, format, pixelRatio }, 'rendering chart');
   const option = builder.build(data, width, height, pixelRatio);
   const output = await render(option, width, height, format, pixelRatio);
+  request.log.info({ type, bytes: Buffer.byteLength(output) }, 'chart rendered');
 
   reply.header('Content-Type', format === 'png' ? 'image/png' : 'image/svg+xml');
   return output;
