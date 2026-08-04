@@ -27,6 +27,14 @@ const chartBodySchema = {
   },
 } as const;
 
+function requestSummary(data: ChartData): string {
+  const count = (key: string) => (Array.isArray(data[key]) ? data[key].length : 0);
+  const distanceUnit = typeof data.distanceUnit === 'string' ? data.distanceUnit : 'm';
+  const valueUnit = typeof data.valueUnit === 'string' ? data.valueUnit : 'm';
+
+  return `units: ${distanceUnit}/${valueUnit}, points: v=${count('velocityData')} d=${count('depthData')} s=${count('surfaceData')}`;
+}
+
 async function chartHandler(
   request: FastifyRequest<{ Body: ChartRequestBody }>,
   reply: FastifyReply,
@@ -39,10 +47,12 @@ async function chartHandler(
     return { error: `unknown chart type: ${type}` } as never;
   }
 
-  request.log.info({ type, width, height, format, pixelRatio }, 'rendering chart');
+  console.log(
+    `[${new Date().toISOString().slice(0, 19)}Z | chart] rendering ${type}: ${width}×${height}px @${pixelRatio} (${format}), ${requestSummary(data)}`,
+  );
   const option = builder.build(data, width, height, pixelRatio);
   const output = await render(option, width, height, format, pixelRatio);
-  request.log.info({ type, bytes: Buffer.byteLength(output) }, 'chart rendered');
+  console.log(`[${new Date().toISOString().slice(0, 19)}Z | chart] rendered ${type}: ${Buffer.byteLength(output)} bytes`);
 
   reply.header('Content-Type', format === 'png' ? 'image/png' : 'image/svg+xml');
   return output;

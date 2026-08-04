@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { buildApp } from '../src/index.js';
 
@@ -42,6 +42,7 @@ describe('POST /chart', () => {
   });
 
   it('returns png content for a valid measurement-visit request', async () => {
+    const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
     const response = await app.inject({
       method: 'POST',
       url: '/chart',
@@ -51,6 +52,8 @@ describe('POST /chart', () => {
     expect(response.statusCode).toBe(200);
     expect(response.headers['content-type']).toContain('image/png');
     expect(response.rawPayload.subarray(0, 4)).toEqual(Buffer.from([0x89, 0x50, 0x4e, 0x47]));
+    expect(log).toHaveBeenCalledWith(expect.stringContaining('units: m/m, points: v=3 d=3 s=3'));
+    log.mockRestore();
   });
 
   it('returns 400 for an unknown chart type', async () => {
